@@ -2,7 +2,7 @@
 
 ### Live link
 
-https://counter-up-down-trigger.vercel.app/
+https://remaining-time-countdown.vercel.app/
 
 ### Interface
 
