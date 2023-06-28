@@ -2,7 +2,7 @@
 
 import Countdown from "@/components/Countdown";
 
-const CounterUpTrigger = () => {
+const CounterComponent = () => {
   const targetDate = new Date("2024-12-12");
   return (
     <main className="w-screen h-screen flex flex-col justify-center items-center">
@@ -13,4 +13,4 @@ const CounterUpTrigger = () => {
   );
 };
 
-export default CounterUpTrigger;
+export default CounterComponent;

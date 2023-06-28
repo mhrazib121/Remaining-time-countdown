@@ -1,15 +1,13 @@
+import { ITimeProps } from "@/Interface";
 import React, { useEffect, useState } from "react";
 
-interface TimeProps {
-  targetDate: Date;
-}
-
-const Countdown: React.FC<TimeProps> = ({ targetDate }) => {
+const Countdown: React.FC<ITimeProps> = ({ targetDate }) => {
   const [days, setDays] = useState(0);
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
 
+  // Calculation for find out remaining days, hours, minutes and seconds
   useEffect(() => {
     const timer = setInterval(() => {
       const currentDate = new Date();

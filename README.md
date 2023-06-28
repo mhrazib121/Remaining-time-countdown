@@ -1,4 +1,4 @@
-<h1 align="center">Counter Up Trigger</h1>
+<h1 align="center">Remaining time countdown app</h1>
 
 ### Live link
 
@@ -7,93 +7,91 @@ https://counter-up-down-trigger.vercel.app/
 ### Interface
 
 ```ts
-export interface ICounterCard {
-  maxCount: number;
-  label: string;
-  title: string;
+export interface ITimeProps {
+  targetDate: Date;
 }
 ```
 
-### Counter Card Component
+### Countdown Component
 
 ```tsx
-import { ICounterCard } from "@/Interface";
-import { useEffect, useRef, useState } from "react";
+import { ITimeProps } from "@/Interface";
+import React, { useEffect, useState } from "react";
 
-export const CounterCard = ({ label, title, maxCount }: ICounterCard) => {
-  const [count, setCount] = useState<number>(0);
-  const [isVisible, setIsVisible] = useState<boolean>(false);
-  const sectionRef = useRef<HTMLDivElement | null>(null);
+const Countdown: React.FC<ITimeProps> = ({ targetDate }) => {
+  const [days, setDays] = useState(0);
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState(0);
 
-// Update isVisible State. up and down trigger the counter
+  // Calculation for find out remaining days, hours, minutes and seconds
   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      const [entry] = entries;
-      setIsVisible(entry.isIntersecting);
-    });
+    const timer = setInterval(() => {
+      const currentDate = new Date();
+      const timeDifference = targetDate.getTime() - currentDate.getTime();
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
+      const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const minutes = Math.floor(
+        (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
+      );
+      const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
 
-// Cleanup the observer when the component is unmounted
+      setDays(days);
+      setHours(hours);
+      setMinutes(minutes);
+      setSeconds(seconds);
+    }, 1000);
+
     return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
-      }
+      clearInterval(timer);
     };
-  }, [sectionRef, setIsVisible]);
-
-// Update counter and duration time duration 
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-
-    if (isVisible) {
-      intervalId = setInterval(() => {
-        if (count < maxCount) {
-          setCount((prevCount) => prevCount + 1);
-        } else {
-          clearInterval(intervalId);
-        }
-      }, 20); // Adjust the interval duration as needed
-    }
-
-  // Cleanup the interval when the component is unmounted or when visibility changes
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [isVisible, count, setCount]);
+  }, [targetDate]);
 
   return (
-    <div
-      ref={sectionRef}
-      className="flex gap-5 md:gap-9 justify-center items-center lg:items-start flex-col text-center lg:text-start w-full"
-    >
-      <h1 className="text-4xl md:text-5xl font-extrabold">
-        {count}
-        <span className="text-primary">{label}</span>
-      </h1>
-      <p className="text-base md:text-xl font-bold">{title}</p>
+    <div className="grid grid-flow-col gap-5 text-center auto-cols-max">
+      <div className="flex flex-col">
+        <span className="countdown font-mono text-5xl">{days}</span>
+        days
+      </div>
+      <div className="flex flex-col">
+        <span className="countdown font-mono text-5xl">{hours}</span>
+        hours
+      </div>
+      <div className="flex flex-col">
+        <span className="countdown font-mono text-5xl">{minutes}</span>
+        min
+      </div>
+      <div className="flex flex-col">
+        <span className="countdown font-mono text-5xl">{seconds}</span>
+        sec
+      </div>
     </div>
   );
 };
+
+export default Countdown;
 ```
 
 ### Counter Main Component
 
 ```tsx
-import { CounterCard } from "@/components";
+"use client";
 
-const CounterUpTrigger = () => (
-  <main className="w-screen h-screen flex flex-col justify-center items-center">
-    <div className="bg-green-500 py-12 px-8 md:py-20 md:px-16 w-fit lg:w-full max-w-6xl mx-auto rounded-[32px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 justify-items-center">
-      <CounterCard maxCount={100} label="M" title="Client Satisfaction" />
-      <CounterCard maxCount={24} label=" h" title="Expert Support Team" />
-      <CounterCard maxCount={98} label=" k+" title="Sales Count" />
-      <CounterCard maxCount={208} label=" +" title="Client Worldwide" />
-    </div>
-  </main>
-);
+import Countdown from "@/components/Countdown";
 
-export default CounterUpTrigger;
+const CounterComponent = () => {
+  const targetDate = new Date("2024-12-12");
+  return (
+    <main className="w-screen h-screen flex flex-col justify-center items-center">
+      <div className="bg-green-500 py-12 px-8 md:py-20 md:px-16 w-fit lg:w-full max-w-6xl mx-auto rounded-[32px] flex justify-center items-center ">
+        <Countdown targetDate={targetDate} />
+      </div>
+    </main>
+  );
+};
+
+export default CounterComponent;
 ```

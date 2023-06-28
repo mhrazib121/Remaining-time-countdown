@@ -1,1 +1,1 @@
-export * from "./ICounterCard";
+export * from "./ITimeProps";
